@@ -1,5 +1,5 @@
 interface DefaultButtonProperties {
-  onClick: (...args: any) => any;
+  onClick: () => void;
   text: string;
 }
 

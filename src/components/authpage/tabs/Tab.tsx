@@ -1,7 +1,7 @@
 interface TabProperties {
   className: string;
   text: string;
-  onClick: (...args: any) => any;
+  onClick: () => void;
 }
 
 export const Tab = ({ className, text, onClick }: TabProperties) => {
