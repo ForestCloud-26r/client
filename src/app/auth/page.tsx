@@ -19,7 +19,11 @@ export default function AuthPage() {
 
   const handleAuth = async () => {
     if (!email || !password || (!isLogin && !fullname)) {
-      setToast({ message: 'Please fill in all fields', type: 'error', id: Date.now() });
+      setToast({
+        message: 'Please fill in all fields',
+        type: 'error',
+        id: Date.now(),
+      });
       return;
     }
 
@@ -29,7 +33,7 @@ export default function AuthPage() {
       email,
       password,
       ...(fullname ? { fullname } : {}),
-    }
+    };
 
     const res = await fetch(url, {
       method: 'POST',
@@ -41,12 +45,21 @@ export default function AuthPage() {
       const { auth_token, user } = await res.json();
       localStorage.setItem('token', auth_token);
       localStorage.setItem('role', user.role);
-      setToast({ message: 'Logged in successfully', type: 'success', timeout: 1000, id: Date.now() })
+      setToast({
+        message: 'Logged in successfully',
+        type: 'success',
+        timeout: 1000,
+        id: Date.now(),
+      });
       setTimeout(() => {
-        router.push('/profile')
+        router.push('/home');
       }, 1400);
     } else {
-      setToast({ message: `${isLogin ? 'Login' : 'Registration'} failed`, type: 'error', id: Date.now() })
+      setToast({
+        message: `${isLogin ? 'Login' : 'Registration'} failed`,
+        type: 'error',
+        id: Date.now(),
+      });
       return;
     }
   };
@@ -61,7 +74,13 @@ export default function AuthPage() {
         />
       </Head>
       {toast && (
-        <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => setToast(null)} timeout={toast.timeout} />
+        <Toast
+          key={toast.id}
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+          timeout={toast.timeout}
+        />
       )}
       <main className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <BackgroundImage />

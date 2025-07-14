@@ -18,10 +18,14 @@ interface ToastProps extends Omit<ToastStateProps, 'id'> {
   onClose: () => void;
 }
 
-export const Toast = ({ message, type = 'notification', onClose, timeout = 3000 }: ToastProps) => {
+export const Toast = ({
+  message,
+  type = 'notification',
+  onClose,
+  timeout = 3000,
+}: ToastProps) => {
   const [visible, setVisible] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const showTimer = setTimeout(() => setVisible(true), 10);
@@ -33,21 +37,16 @@ export const Toast = ({ message, type = 'notification', onClose, timeout = 3000 
 
     return () => {
       clearTimeout(showTimer);
-      if (timerRef.current) clearTimeout(timerRef.current)
-    }
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+    // eslint-disable-next-line
   }, [timeout]);
 
   // Icons (simple SVGs)
   const icons = {
-    error: (
-      <ErrorIcon />
-    ),
-    success: (
-      <SuccessIcon />
-    ),
-    notification: (
-      <NotificationIcon />
-    ),
+    error: <ErrorIcon />,
+    success: <SuccessIcon />,
+    notification: <NotificationIcon />,
   };
 
   return (
@@ -64,4 +63,3 @@ export const Toast = ({ message, type = 'notification', onClose, timeout = 3000 
     </div>
   );
 };
-

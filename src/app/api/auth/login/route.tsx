@@ -7,18 +7,23 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const response = await axios.post(`${BACKEND_URL}/api/v1/auth/signin`, body, {
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await axios.post(
+      `${BACKEND_URL}/api/v1/auth/signin`,
+      body,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
 
     return NextResponse.json(response.data, { status: response.status });
+    // eslint-disable-next-line
   } catch (error: any) {
-    if (error.response) {
+    if (error.isAxiosError(error)) {
       return NextResponse.json(
         { error: error.response.data.message || 'Backend error' },
-        { status: error.response.status }
+        { status: error.response.status },
       );
     }
 
