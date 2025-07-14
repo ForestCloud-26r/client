@@ -7,12 +7,9 @@ interface TabProperties {
 export const Tab = ({ className, text, onClick }: TabProperties) => {
   return (
     <>
-      <button
-        className={className}
-        onClick={onClick}
-      >
+      <button className={className} onClick={onClick}>
         {text}
       </button>
     </>
-  )
-}
+  );
+};

@@ -10,12 +10,12 @@ interface InputProperties {
 }
 
 export const Input = ({
-                        type,
-                        placeholder,
-                        value,
-                        onChange,
-                        isRequired = false,
-                      }: InputProperties) => {
+  type,
+  placeholder,
+  value,
+  onChange,
+  isRequired = false,
+}: InputProperties) => {
   const [isFocused, setIsFocused] = useState(false);
   const shouldFloat = isFocused || value.length > 0;
 
@@ -24,7 +24,7 @@ export const Input = ({
       <div
         className={clsx(
           'relative w-full rounded-xl border-2 transition-all duration-200',
-          shouldFloat ? 'border-green-600' : 'border-gray-400'
+          shouldFloat ? 'border-green-600' : 'border-gray-400',
         )}
       >
         {/* Floating label that cuts the border */}

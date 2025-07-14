@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from 'next/image';
 
 export const BackgroundImage = () => {
   return (
@@ -15,5 +15,5 @@ export const BackgroundImage = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};

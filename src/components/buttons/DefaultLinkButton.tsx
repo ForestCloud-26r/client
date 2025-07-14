@@ -5,7 +5,10 @@ interface DefaultLinkButtonProperties {
   text: string;
 }
 
-export const DefaultLinkButton = ({ href, text }: DefaultLinkButtonProperties) => {
+export const DefaultLinkButton = ({
+  href,
+  text,
+}: DefaultLinkButtonProperties) => {
   return (
     <Link
       href={href}
