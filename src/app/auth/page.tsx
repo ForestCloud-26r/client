@@ -6,33 +6,48 @@ import { AuthTabSelector } from '@/components/authpage/AuthTabSelector';
 import { BackgroundImage } from '@/components/BackgroundImage';
 import { LoginForm } from '@/components/authpage/forms/LoginForm';
 import { SignupForm } from '@/components/authpage/forms/SignupForm';
+import { Copyright } from '@/components/copyright';
+import { Toast, ToastStateProps } from '@/components/ui/Toast';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [fullname, setFullname] = useState('');
   const [password, setPassword] = useState('');
+  const [toast, setToast] = useState<ToastStateProps | null>(null);
   const router = useRouter();
 
   const handleAuth = async () => {
+    if (!email || !password || (!isLogin && !fullname)) {
+      setToast({ message: 'Please fill in all fields', type: 'error', id: Date.now() });
+      return;
+    }
+
     const url = isLogin ? '/api/auth/login' : '/api/auth/register';
+
+    const body = {
+      email,
+      password,
+      ...(fullname ? { fullname } : {}),
+    }
+
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(body),
     });
 
     if (res.ok) {
-      if (isLogin) {
-        const { token, role } = await res.json();
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', role);
-        router.push('/profile');
-      } else {
-        setIsLogin(true);
-      }
+      const { auth_token, user } = await res.json();
+      localStorage.setItem('token', auth_token);
+      localStorage.setItem('role', user.role);
+      setToast({ message: 'Logged in successfully', type: 'success', timeout: 1000, id: Date.now() })
+      setTimeout(() => {
+        router.push('/profile')
+      }, 1400);
     } else {
-      alert(`${isLogin ? 'Login' : 'Registration'} failed`);
+      setToast({ message: `${isLogin ? 'Login' : 'Registration'} failed`, type: 'error', id: Date.now() })
+      return;
     }
   };
 
@@ -45,6 +60,9 @@ export default function AuthPage() {
           content="width=device-width, initial-scale=1, interactive-widget=overlays-content"
         />
       </Head>
+      {toast && (
+        <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => setToast(null)} timeout={toast.timeout} />
+      )}
       <main className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <BackgroundImage />
         <div className="relative z-10 w-full max-w-md bg-white/70 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden m-3">
@@ -79,6 +97,7 @@ export default function AuthPage() {
               />
             </div>
           </div>
+          <Copyright />
         </div>
       </main>
     </>
