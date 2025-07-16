@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
+import { SigninBodyDto } from '@/dto/auth/signin-body.dto';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:9180';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body: SigninBodyDto = await req.json();
 
     const response = await axios.post(
       `${BACKEND_URL}/api/v1/auth/signin`,
@@ -20,13 +21,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(response.data, { status: response.status });
     // eslint-disable-next-line
   } catch (error: any) {
-    if (error.isAxiosError(error)) {
+    if (isAxiosError(error)) {
       return NextResponse.json(
-        { error: error.response.data.message || 'Backend error' },
-        { status: error.response.status },
+        { message: error.response?.data.message },
+        { status: error.response?.data.statusCode },
       );
     }
 
-    return NextResponse.json({ error: 'Unknown error' }, { status: 500 });
+    return NextResponse.json({ message: 'Unknown error' }, { status: 500 });
   }
 }

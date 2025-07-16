@@ -1,28 +1,53 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Head from 'next/head';
 import { BackgroundImage } from '@/components/BackgroundImage';
+import { Toast, ToastStateProps } from '@/components/ui/Toast';
 
 export default function Home() {
   const [role, setRole] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const temporaryPasswordUsed = searchParams.get('temporaryPasswordUsed');
+  const [toast, setToast] = useState<ToastStateProps | null>(null);
   const router = useRouter();
-
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedRole = localStorage.getItem('role');
+
+    if (temporaryPasswordUsed === '1') {
+      setToast({
+        message: 'Temporary password used. Please change your password',
+        type: 'notification',
+        id: Date.now(),
+        timeout: 5000,
+      });
+
+      const newUrl = '/home';
+      router.replace(newUrl);
+    }
+
     if (!token || !storedRole) {
       router.push('/auth');
     } else {
       setRole(storedRole);
     }
-  }, [router]);
+  }, [router, temporaryPasswordUsed]);
 
   return (
     <>
       <Head>
         <link rel="preload" as="image" href="/background.jpg" />
       </Head>
+      {toast && (
+        <Toast
+          key={toast.id}
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+          timeout={toast.timeout}
+        />
+      )}
       <main className="relative min-h-screen">
         <BackgroundImage />
 

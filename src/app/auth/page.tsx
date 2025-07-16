@@ -8,6 +8,8 @@ import { LoginForm } from '@/components/authpage/forms/LoginForm';
 import { SignupForm } from '@/components/authpage/forms/SignupForm';
 import { Copyright } from '@/components/copyright';
 import { Toast, ToastStateProps } from '@/components/ui/Toast';
+import { AuthBodyDto } from '@/dto/auth/signin-response.dto';
+import { SigninResponseDto } from '@/dto/auth/auth-response.dto';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -29,7 +31,7 @@ export default function AuthPage() {
 
     const url = isLogin ? '/api/auth/login' : '/api/auth/register';
 
-    const body = {
+    const body: AuthBodyDto = {
       email,
       password,
       ...(fullname ? { fullname } : {}),
@@ -41,22 +43,27 @@ export default function AuthPage() {
       body: JSON.stringify(body),
     });
 
+    const data = (await res.json()) as SigninResponseDto;
+
     if (res.ok) {
-      const { auth_token, user } = await res.json();
-      localStorage.setItem('token', auth_token);
-      localStorage.setItem('role', user.role);
+      localStorage.setItem('token', data.auth_token);
+      localStorage.setItem('role', data.user.role);
+
       setToast({
         message: 'Logged in successfully',
         type: 'success',
         timeout: 1000,
         id: Date.now(),
       });
+
       setTimeout(() => {
-        router.push('/home');
+        router.push(
+          `/home?temporaryPasswordUsed=${data.temporaryPasswordUsed ? '1' : '0'}`,
+        );
       }, 1400);
     } else {
       setToast({
-        message: `${isLogin ? 'Login' : 'Registration'} failed`,
+        message: data.message ?? 'Unknown error',
         type: 'error',
         id: Date.now(),
       });
